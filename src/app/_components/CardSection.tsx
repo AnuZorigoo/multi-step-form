@@ -11,6 +11,26 @@ import {
 import { Input } from "@/components/ui/input";
 import { ContinueButton } from "./ContinueButton";
 import { TextField } from "./TextField";
+import { useState } from "react";
+
+// function StepTwo({ onSubmit }: { onSubmit: (data: any) => void }) {
+//   const [form, setForm] = useState({
+//     firstName: "",
+//     lastName: "",
+//     userName: "",
+//   });
+//   const [errors, setErrors] = useState({} as any);
+
+//   const validate = () => {
+//     let e: any = {};
+
+//     if (!form.firstName.trim()) e.first = "First name is required";
+//     if (!form.lastName.trim()) e.last = "Last name is required";
+//     if (!form.userName.trim()) e.username = "Username is required";
+
+//     setErrors(e);
+//     return Object.keys(e).length === 0;
+//   };
 
 export function CardSection() {
   return (
@@ -30,10 +50,11 @@ export function CardSection() {
       <CardContent>
         <form>
           <div className="flex flex-col gap-6">
-            <TextField />
+            {data.map((item, index) => {
+              return <TextField key={index} name={item.name} />;
+            })}
             <div className="grid gap-2">
               <div className="flex items-center"></div>
-              <Input id="password" type="password" required />
             </div>
           </div>
         </form>
@@ -64,3 +85,15 @@ export function CardSection() {
     </div>
   </div>
 </div>;
+
+export const data = [
+  {
+    name: "First name",
+  },
+  {
+    name: "Last name",
+  },
+  {
+    name: "Username",
+  },
+];
