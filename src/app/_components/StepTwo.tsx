@@ -14,19 +14,33 @@ import {
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { Header } from "./Header";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-export function CardSection({ next, step }) {
-  const form = useForm({
+type StepTwoProps = {
+  step: number;
+};
+
+const formSchema = z.object({
+  email: z.string().min(2).max(50),
+  phone: z.number().min(8).max(8),
+  password: z.string().min(8).max(20),
+  confirm: z.string().min(8).max(20),
+});
+
+export function StepTwo({ step, next }: StepTwoProps) {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      username: "",
+      email: "",
+      phone: 0,
+      password: "",
+      confirm: "",
     },
   });
 
-  const router = useRouter();
-
   const onSubmit = (data: any) => {
+    console.log("FORM DATA:", data);
     next();
   };
 
@@ -44,14 +58,6 @@ export function CardSection({ next, step }) {
               key={index}
               control={form.control}
               name={item.name}
-              rules={{
-                required: `${item.label} is required`,
-                pattern: {
-                  value: /^[A-Za-zА-Яа-яӨөҮүЁёҢңЇїІіЬьЪъ\s]+$/,
-                  message:
-                    "First name cannot contain special characters or numbers.",
-                },
-              }}
               render={({ field }) => (
                 <FormItem>
                   <div className="flex gap-1">
@@ -75,7 +81,12 @@ export function CardSection({ next, step }) {
 }
 
 export const data = [
-  { label: "First name", placeholder: "Placeholder", name: "firstName" },
-  { label: "Last name", placeholder: "Placeholder", name: "lastName" },
-  { label: "Username", placeholder: "Placeholder", name: "username" },
+  { label: "Email", placeholder: "Placeholder", name: "email" },
+  { label: "Phone number", placeholder: "Placeholder", name: "phone" },
+  { label: "Password", placeholder: "Placeholder", name: "password" },
+  {
+    label: " Confirm Password",
+    placeholder: "Placeholder",
+    name: " confirm",
+  },
 ];

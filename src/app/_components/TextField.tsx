@@ -9,7 +9,7 @@ export const TextField = (props: any) => {
         <p className="font-semibold text-[14px]">{props.name}</p>
         <p className="text-[#E14942]">*</p>
       </div>
-      <Input id="email" type="email" placeholder="Placeholder" required />
+      <Input id="email" type={props.type} placeholder="Placeholder" required />
     </div>
   );
 };
