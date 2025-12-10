@@ -19,28 +19,40 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 type StepTwoProps = {
   step: number;
+  next: any;
 };
 
-const formSchema = z.object({
-  email: z.string().min(2).max(50),
-  phone: z.number().min(8).max(8),
-  password: z.string().min(8).max(20),
-  confirm: z.string().min(8).max(20),
-});
+const formSchema = z
+  .object({
+    email: z.string().min(2).max(50),
+    phone: z
+      .string()
+      .length(8, "Утасны дугаар 8 оронтой байх ёстой")
+      .regex(/^\d+$/, "Утасны дугаарт зөвхөн тоо оруулна уу"),
+    password: z.string().min(8).max(20),
+    confirm: z.string().min(8).max(20),
+  })
+  .refine((data) => data.password === data.confirm, {
+    message: "Passwords do not match",
+    path: ["confirm"],
+  });
 
 export function StepTwo({ step, next }: StepTwoProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      phone: 0,
+      phone: "",
       password: "",
       confirm: "",
     },
   });
 
+  const router = useRouter();
+
   const onSubmit = (data: any) => {
-    console.log("FORM DATA:", data);
+    console.log("hgjkl");
+
     next();
   };
 
@@ -82,11 +94,15 @@ export function StepTwo({ step, next }: StepTwoProps) {
 
 export const data = [
   { label: "Email", placeholder: "Placeholder", name: "email" },
-  { label: "Phone number", placeholder: "Placeholder", name: "phone" },
+  {
+    label: "Phone number",
+    placeholder: "Placeholder",
+    name: "phone",
+  },
   { label: "Password", placeholder: "Placeholder", name: "password" },
   {
     label: " Confirm Password",
     placeholder: "Placeholder",
-    name: " confirm",
+    name: "confirm",
   },
 ];

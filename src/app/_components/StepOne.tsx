@@ -14,12 +14,38 @@ import {
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { Header } from "./Header";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-export function CardSection({ next, step }) {
-  const form = useForm({
+type StepOneProps = {
+  step: number;
+  next: any;
+};
+
+const formSchema = z.object({
+  firstname: z
+    .string()
+    .min(2)
+    .max(50)
+    .regex(/^[A-Za-z]+$/, "Firstname can only contain letters"),
+  lastname: z
+    .string()
+    .min(2)
+    .max(20)
+    .regex(/^[A-Za-z]+$/, "Lastname can only contain letters"),
+  username: z
+    .string()
+    .min(2)
+    .max(20)
+    .regex(/^[A-Za-z]+$/, "Username can only contain letters"),
+});
+
+export function StepOne({ next, step }: StepOneProps) {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      firstname: "",
+      lastname: "",
       username: "",
     },
   });
@@ -44,14 +70,6 @@ export function CardSection({ next, step }) {
               key={index}
               control={form.control}
               name={item.name}
-              rules={{
-                required: `${item.label} is required`,
-                pattern: {
-                  value: /^[A-Za-zА-Яа-яӨөҮүЁёҢңЇїІіЬьЪъ\s]+$/,
-                  message:
-                    "First name cannot contain special characters or numbers.",
-                },
-              }}
               render={({ field }) => (
                 <FormItem>
                   <div className="flex gap-1">
@@ -75,7 +93,7 @@ export function CardSection({ next, step }) {
 }
 
 export const data = [
-  { label: "First name", placeholder: "Placeholder", name: "firstName" },
-  { label: "Last name", placeholder: "Placeholder", name: "lastName" },
+  { label: "First name", placeholder: "Placeholder", name: "firstname" },
+  { label: "Last name", placeholder: "Placeholder", name: "lastname" },
   { label: "Username", placeholder: "Placeholder", name: "username" },
 ];
