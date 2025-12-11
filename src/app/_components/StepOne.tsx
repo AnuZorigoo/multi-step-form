@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { Header } from "./Header";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AnimatePresence, motion } from "motion/react";
 
 type StepOneProps = {
   step: number;

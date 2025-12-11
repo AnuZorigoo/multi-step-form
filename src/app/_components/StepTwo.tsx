@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { Header } from "./Header";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { BackButton } from "./BackButton";
 
 type StepTwoProps = {
   step: number;
@@ -65,44 +66,76 @@ export function StepTwo({ step, next }: StepTwoProps) {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-6"
         >
-          {data.map((item, index) => (
-            <FormField
-              key={index}
-              control={form.control}
-              name={item.name}
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex gap-1">
-                    <FormLabel>{item.label}</FormLabel>
-                    <span className="text-[#E14942]">*</span>
-                  </div>
-                  <FormControl>
-                    <Input placeholder={item.placeholder} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          ))}
-
-          <ContinueButton step={step} />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex gap-1">
+                  <FormLabel>Email</FormLabel>
+                  <span className="text-[#E14942]">*</span>
+                </div>
+                <FormControl>
+                  <Input placeholder="Placeholder" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex gap-1">
+                  <FormLabel>Phone number</FormLabel>
+                  <span className="text-[#E14942]">*</span>
+                </div>
+                <FormControl>
+                  <Input placeholder="Placeholder" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex gap-1">
+                  <FormLabel>Password</FormLabel>
+                  <span className="text-[#E14942]">*</span>
+                </div>
+                <FormControl>
+                  <Input type="password" placeholder="Placeholder" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="confirm"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex gap-1">
+                  <FormLabel>Confirm Password</FormLabel>
+                  <span className="text-[#E14942]">*</span>
+                </div>
+                <FormControl>
+                  <Input type="password" placeholder="Placeholder" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex gap-2 w-full">
+            <BackButton onBack={() => next()} />
+            <ContinueButton step={step} />
+          </div>
         </form>
       </Form>
     </Card>
   );
 }
-
-export const data = [
-  { label: "Email", placeholder: "Placeholder", name: "email" },
-  {
-    label: "Phone number",
-    placeholder: "Placeholder",
-    name: "phone",
-  },
-  { label: "Password", placeholder: "Placeholder", name: "password" },
-  {
-    label: " Confirm Password",
-    placeholder: "Placeholder",
-    name: "confirm",
-  },
-];

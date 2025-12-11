@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -17,7 +15,7 @@ export const ContinueButton = ({ step }: ContinueButtonProps) => {
   if (pathname.includes("step-3")) step = 3;
 
   return (
-    <Button type="submit" className="w-full">
+    <Button type="submit" className="h-11 w-full flex-2">
       Continue {step}/3 <ChevronRight />
     </Button>
   );
