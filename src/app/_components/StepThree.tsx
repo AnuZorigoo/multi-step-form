@@ -17,37 +17,51 @@ import { Header } from "./Header";
 import z, { date } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-
-type StepThreeProps = {
-  step: number;
-  next: any;
-};
+import { useContext, useState } from "react";
+import { BackButton } from "./BackButton";
+import { StepContext, Data } from "../page";
 
 const formSchema = z.object({
   birthday: z.coerce
     .date()
-    .max(new Date(), {
+    .nullable()
+    .refine((val) => val !== null, { message: "Date is required" })
+    .refine((val) => val! <= new Date(), {
       message: "Date of birth cannot be in the future.",
     })
-    .min(new Date("1900-01-01"), {
+    .refine((val) => val! >= new Date("1900-01-01"), {
       message: "Date of birth cannot be before 1900.",
     }),
-  image: z.instanceof(File, { message: "Image cannot be blank" }),
+
+  image: z
+    .instanceof(File)
+    .nullable()
+    .refine((val) => val !== null, {
+      message: "Image cannot be blank",
+    }),
 });
 
-export function StepThree({ next, step }: StepThreeProps) {
+export const StepThree = () => {
+  const { step, handleNextStep, data, setData, handlePrevStep } =
+    useContext(StepContext);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      birthday: new Date(),
+      birthday: data.birthday ?? null,
+      image: data.image ?? null,
     },
   });
+
   const router = useRouter();
 
-  const onSubmit = (data: any) => {
-    console.log("FORM DATA:", data);
-    next();
+  const onSubmit = (values: any) => {
+    setData((prev) => ({
+      ...prev,
+      birthday: values.birthday,
+      image: values.image,
+    }));
+    handleNextStep();
   };
   const [preview, setPreview] = useState<string | null>(null);
 
@@ -73,7 +87,10 @@ export function StepThree({ next, step }: StepThreeProps) {
                   <Input
                     type="date"
                     {...field}
-                    // onChange={(e) => field.onChange(new Date(e.target.value))}
+                    value={
+                      field.value ? field.value.toISOString().split("T")[0] : ""
+                    }
+                    onChange={(e) => field.onChange(new Date(e.target.value))}
                   />
                 </FormControl>
                 <FormMessage />
@@ -137,9 +154,13 @@ export function StepThree({ next, step }: StepThreeProps) {
             )}
           />
 
-          <ContinueButton step={step} />
+          <div className="flex gap-2 w-full">
+            <BackButton onBack={() => handleNextStep(-1)} />
+
+            <ContinueButton step={step} />
+          </div>
         </form>
       </Form>
     </Card>
   );
-}
+};

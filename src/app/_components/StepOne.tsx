@@ -16,12 +16,8 @@ import { useRouter } from "next/navigation";
 import { Header } from "./Header";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AnimatePresence, motion } from "motion/react";
-
-type StepOneProps = {
-  step: number;
-  next: any;
-};
+import { Data, StepContext } from "../page";
+import { Dispatch, SetStateAction, useContext } from "react";
 
 const formSchema = z.object({
   firstname: z
@@ -41,20 +37,28 @@ const formSchema = z.object({
     .regex(/^[A-Za-z]+$/, "Username can only contain letters"),
 });
 
-export function StepOne({ next, step }: StepOneProps) {
+export const StepOne = () => {
+  const { step, handleNextStep, data, setData } = useContext(StepContext);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstname: "",
-      lastname: "",
-      username: "",
+      firstname: data.firstname,
+      lastname: data.lastname,
+      username: data.username,
     },
   });
 
   const router = useRouter();
 
-  const onSubmit = (data: any) => {
-    next();
+  const onSubmit = (values: any) => {
+    setData((prev) => ({
+      ...prev,
+      firstname: values.firstname,
+      lastname: values.lastname,
+      username: values.username,
+    }));
+    handleNextStep();
   };
 
   return (
@@ -66,35 +70,58 @@ export function StepOne({ next, step }: StepOneProps) {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-6"
         >
-          {data.map((item, index) => (
-            <FormField
-              key={index}
-              control={form.control}
-              name={item.name}
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex gap-1">
-                    <FormLabel>{item.label}</FormLabel>
-                    <span className="text-[#E14942]">*</span>
-                  </div>
-                  <FormControl>
-                    <Input placeholder={item.placeholder} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          ))}
+          <FormField
+            control={form.control}
+            name="firstname"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex gap-1">
+                  <FormLabel>First name</FormLabel>
+                  <span className="text-[#E14942]">*</span>
+                </div>
+                <FormControl>
+                  <Input placeholder="Placeholder" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastname"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex gap-1">
+                  <FormLabel>Last name</FormLabel>
+                  <span className="text-[#E14942]">*</span>
+                </div>
+                <FormControl>
+                  <Input placeholder="Placeholder" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex gap-1">
+                  <FormLabel>Username</FormLabel>
+                  <span className="text-[#E14942]">*</span>
+                </div>
+                <FormControl>
+                  <Input placeholder="Placeholder" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <ContinueButton step={step} />
         </form>
       </Form>
     </Card>
   );
-}
-
-export const data = [
-  { label: "First name", placeholder: "Placeholder", name: "firstname" },
-  { label: "Last name", placeholder: "Placeholder", name: "lastname" },
-  { label: "Username", placeholder: "Placeholder", name: "username" },
-];
+};

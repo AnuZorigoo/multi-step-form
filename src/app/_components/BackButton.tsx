@@ -2,10 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
-import React from "react";
 
 export const BackButton = ({ onBack }: { onBack: () => void }) => {
   const handleGoBack = () => {
+    if (onBack) return onBack();
     window.history.back();
   };
 
@@ -15,8 +15,7 @@ export const BackButton = ({ onBack }: { onBack: () => void }) => {
       variant="secondary"
       className="w-32 h-11 flex-1"
     >
-      {" "}
-      <ChevronLeft /> Back{" "}
+      <ChevronLeft /> Back
     </Button>
   );
 };

@@ -17,20 +17,29 @@ import { Header } from "./Header";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BackButton } from "./BackButton";
-
-type StepTwoProps = {
-  step: number;
-  next: any;
-};
+import { ChevronLeft } from "lucide-react";
+import { useContext } from "react";
+import { StepContext, Data } from "../page";
 
 const formSchema = z
   .object({
-    email: z.string().min(2).max(50),
+    email: z
+      .string()
+      .min(2)
+      .max(50)
+      .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/),
     phone: z
       .string()
       .length(8, "Утасны дугаар 8 оронтой байх ёстой")
       .regex(/^\d+$/, "Утасны дугаарт зөвхөн тоо оруулна уу"),
-    password: z.string().min(8).max(20),
+    password: z
+      .string()
+      .min(8)
+      .max(20)
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
+        "Тусгай тэмдэгт болон том жижиг үсэг оруулна уу"
+      ),
     confirm: z.string().min(8).max(20),
   })
   .refine((data) => data.password === data.confirm, {
@@ -38,23 +47,30 @@ const formSchema = z
     path: ["confirm"],
   });
 
-export function StepTwo({ step, next }: StepTwoProps) {
+export const StepTwo = () => {
+  const { step, handleNextStep, data, setData } = useContext(StepContext);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      phone: "",
-      password: "",
-      confirm: "",
+      email: data.email,
+      phone: data.phone,
+      password: data.password,
+      confirm: data.confirm,
     },
   });
 
   const router = useRouter();
 
-  const onSubmit = (data: any) => {
-    console.log("hgjkl");
-
-    next();
+  const onSubmit = (values: any) => {
+    setData((prev) => ({
+      ...prev,
+      email: values.email,
+      phone: values.phone,
+      password: values.username,
+      confirm: values.confirm,
+    }));
+    handleNextStep();
   };
 
   return (
@@ -131,11 +147,12 @@ export function StepTwo({ step, next }: StepTwoProps) {
             )}
           />
           <div className="flex gap-2 w-full">
-            <BackButton onBack={() => next()} />
+            <BackButton onBack={() => handleNextStep(-1)} />
+
             <ContinueButton step={step} />
           </div>
         </form>
       </Form>
     </Card>
   );
-}
+};
