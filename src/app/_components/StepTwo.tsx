@@ -48,7 +48,8 @@ const formSchema = z
   });
 
 export const StepTwo = () => {
-  const { step, handleNextStep, data, setData } = useContext(StepContext);
+  const { step, handleNextStep, data, setData, handlePrevStep } =
+    useContext(StepContext);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -147,7 +148,7 @@ export const StepTwo = () => {
             )}
           />
           <div className="flex gap-2 w-full">
-            <BackButton onBack={() => handleNextStep()} />
+            <BackButton onBack={handlePrevStep} />
 
             <ContinueButton step={step} />
           </div>
