@@ -17,7 +17,7 @@ type StepContextType = {
 };
 
 export const StepContext = createContext<StepContextType>(
-  {} as StepContextType
+  {} as StepContextType,
 );
 
 export type Data = {
@@ -57,7 +57,14 @@ export default function Home() {
 
   return (
     <StepContext.Provider
-      value={{ step, handlePrevStep, handleNextStep, data, setData }}
+      value={{
+        step,
+        handlePrevStep,
+        handleNextStep,
+        data,
+        setData,
+        prev: Math.max(step - 1, 1),
+      }}
     >
       <div className="flex min-h-screen items-center justify-center font-sans">
         <AnimatePresence mode="wait">
@@ -71,7 +78,7 @@ export default function Home() {
             {step === 1 && <StepOne />}
             {step === 2 && <StepTwo />}
             {step === 3 && <StepThree />}
-            {step === 4 && <Set />}
+            {step === 4 && <Set step={step} next={handleNextStep} />}
           </motion.div>
         </AnimatePresence>
       </div>

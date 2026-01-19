@@ -38,7 +38,7 @@ const formSchema = z
       .max(20)
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
-        "Тусгай тэмдэгт болон том жижиг үсэг оруулна уу"
+        "Тусгай тэмдэгт болон том жижиг үсэг оруулна уу",
       ),
     confirm: z.string().min(8).max(20),
   })
@@ -147,7 +147,7 @@ export const StepTwo = () => {
             )}
           />
           <div className="flex gap-2 w-full">
-            <BackButton onBack={() => handleNextStep(-1)} />
+            <BackButton onBack={() => handleNextStep()} />
 
             <ContinueButton step={step} />
           </div>

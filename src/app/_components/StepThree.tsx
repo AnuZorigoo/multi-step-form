@@ -11,7 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
+import { useForm, type Control } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { Header } from "./Header";
 import z, { date } from "zod";
@@ -46,7 +46,7 @@ export const StepThree = () => {
     useContext(StepContext);
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema) as any,
     defaultValues: {
       birthday: data.birthday ?? null,
       image: data.image ?? null,
@@ -75,7 +75,9 @@ export const StepThree = () => {
           className="flex flex-col gap-6"
         >
           <FormField
-            control={form.control}
+            control={
+              form.control as unknown as Control<z.infer<typeof formSchema>>
+            }
             name="birthday"
             render={({ field }) => (
               <FormItem>
@@ -98,7 +100,9 @@ export const StepThree = () => {
             )}
           />
           <FormField
-            control={form.control}
+            control={
+              form.control as unknown as Control<z.infer<typeof formSchema>>
+            }
             name="image"
             render={({ field }) => (
               <FormItem>
@@ -137,11 +141,20 @@ export const StepThree = () => {
                     />
                     {preview && (
                       <div
-                        type="button"
+                        role="button"
+                        tabIndex={0}
                         onClick={() => {
                           setPreview(null);
                           field.onChange(null);
                         }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            setPreview(null);
+                            field.onChange(null);
+                          }
+                        }}
+                        aria-label="Remove image"
                         className="absolute top-2 right-2 text-white rounded-full w-7 h-7 flex items-center justify-center shadow-lg hover:bg-black"
                       >
                         ✕
@@ -155,7 +168,7 @@ export const StepThree = () => {
           />
 
           <div className="flex gap-2 w-full">
-            <BackButton onBack={() => handleNextStep(-1)} />
+            <BackButton onBack={handlePrevStep} />
 
             <ContinueButton step={step} />
           </div>
